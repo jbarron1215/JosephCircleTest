@@ -1,0 +1,163 @@
+#########################
+##      REFERENCES     ##
+#########################
+
+# Reference values that can be used throughout the YAML file.
+references:
+
+  # The configuration of the job containers
+  container_config: &container_config
+    docker:
+      # This image includes PHP 7.12.21, Composer, and Node 8.12.0
+      # Tried to find one that didn't have the extra browser stuff,
+      # or ones that matched our version of PHP more closely
+      # but they are missing from CircleCI's Docker Hub.
+      # We will probably need our own custom image in the future
+      # when we integrate unit tests.
+      - image: circle-ci/php:7.1.21-jessie-node-browsers-legacy
+    working_directory: &working_directory ~/project
+  
+  # The root of the workspace, which can persist between jobs.
+  workspace_root: &workspace_root ~/project/workspace
+
+  # Attaches the current job to the workspace.
+  # Useful if you need the results from a previous job.
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+  
+  # Restores a repository which has been cached.
+  # If caches need to be regenerated, simply increment
+  # the version number.
+  restore_repo: &restore_repo
+    restore_cache:
+      keys:
+        - v1-repo-{{ .Branch }}-{{ .Revision }}
+        - v1-repo-{{ .Branch }}
+        - v1-repo
+
+  # The key to use when caching node_modules
+  npm_cache_key: &npm_cache_key
+    v1-dependency-npm-{{ checksum "package.json" }}
+
+  # The key to use when caching Composer packages
+  composer_cache_key: &composer_cache_key
+    v1-dependency-composer-{{ checksum "composer.json" }}
+
+  # Restores node_modules from the cache.
+  restore_node_modules: &restore_node_modules
+    restore_cache:
+      key: *npm_cache_key
+
+  # Restores vendor from the cache.
+  restore_vendor: &restore_vendor
+    restore_cache:
+      key: *composer_cache_key
+
+#########################
+##   CIRCLECI CONFIG   ##
+#########################
+version: 2
+
+# Individual tasks. The order that we execute these tasks
+# is defined under "workflows".
+jobs:
+
+  # This job is responsible for caching repos.
+  checkout_code:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - checkout
+      - save_cache:
+          key: v1-repo-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - .
+
+  # This job is responsible for caching ./node_modules (npm)
+  install_npm_dependencies:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_node_modules
+      - run:
+          name: install npm dependencies
+          command: npm install
+      - save_cache:
+          key: *npm_cache_key
+          paths:
+            - node_modules
+  
+  # This job is responsible for caching ./vendor (Composer)
+  install_composer_dependencies:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_vendor
+      - run:
+          name: install composer dependencies
+          command: composer install
+      - save_cache:
+          key: *composer_cache_key
+          paths:
+            - vendor
+  
+  # This job will run "pretty-ci" from package.json
+  test_prettier:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_node_modules
+      - run:
+          name: Test pretty-ci
+          command: npm run pretty-ci
+  
+  # This job will run "lintjs-ci" from package.json
+  test_lintjs:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_node_modules
+      - run:
+          name: Test lintjs
+          command: npm run lintjs-ci
+  
+  # This job will run "lintphp_ci" from package.json
+  test_lintphp:
+    <<: *container_config
+    steps:
+      - *restore_repo
+      - *restore_node_modules
+      - *restore_vendor
+      - run:
+          name: Test lintphp
+          command: npm run lintphp-ci
+
+# Workflows let us define a sequence of jobs to do,
+# as well as which jobs are dependent on others.
+workflows:
+  version: 2
+
+  # This workflow will run our pretty & linting tests.
+  tests_lint:
+    jobs:
+      - checkout_code
+      - install_npm_dependencies:
+          requires:
+            - checkout_code
+      - install_composer_dependencies:
+          requires:
+            - checkout_code
+      - test_prettier
+          requires:
+            - checkout_code
+            - install_npm_dependencies
+      - test_lintjs
+          requires:
+            - checkout_code
+            - install_npm_dependencies
+      - test_lintphp
+          requires:
+            - checkout_code
+            - install_npm_dependencies
+            - install_composer_dependencies
