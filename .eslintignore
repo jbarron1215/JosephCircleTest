@@ -1,0 +1,46 @@
+/assets/pythonbook
+/assets/vendor
+/m/wiki
+/dhtmlx-del
+/vendor
+/m/ourcode/js/pythontool.js
+/bin/es5admin/AC_OETags.js
+
+# Temporary overaggressive ignore patterns until we figure out what things inside should be linted
+/m/schoolhouse
+/m/classroom
+/m/classroom-union
+/m/classroom-sf
+# Has a broken JS file, ask Larry what this is for
+/api/v1
+
+# Too old to be worth linting
+/m/jsdemo
+/m/community/js/Archive
+
+# Not actually JS, should rename
+/m/grader/js/snippets.js
+/m/daphne/js/alc_bugs_code_snippets.js
+/m/daphne/js/snippets.js
+/m/schoolhouse/js/mathjax-config.js
+/m/classroom-union/js/mathjax-config.js
+
+/m/community/js/precomp_blogs.js
+/m/community/js/precomp_community_common.js
+/m/community/js/precomp_in_community.js
+/m/community/js/precomp_in_community_bk.js
+/assets/js/cmtymin_core.js
+alcmin_core.js
+alcmin_grid.js
+ebkmin_core.js
+hb_precompiled.js
+dash_hb_precompiled.js
+oprah_hb_precompiled.js
+timesheets_hb_precompiled.js
+dash_min_review.js
+dash_min_core.js
+grdr_hb_precompiled.js
+grdr_admin_hb_precompiled.js
+grdr_min_admin.js
+grdr_min_core.js
+grdr_min_external.js

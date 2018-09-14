@@ -1,0 +1,13 @@
+{
+	"require": {
+		"taxjar/taxjar-php": "^1.6",
+		"zf1/zend-search-lucene": "~1.12",
+		"google/apiclient": "^2.0",
+		"maciejczyzewski/bottomline": "*"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "*",
+		"squizlabs/php_codesniffer": "3.*",
+		"wp-coding-standards/wpcs": "*"
+	}
+}
