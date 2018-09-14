@@ -96,7 +96,7 @@ jobs:
       - *restore_vendor
       - run:
           name: install composer dependencies
-          command: composer install
+          command: composer install -n --prefer-dist
       - save_cache:
           key: *composer_cache_key
           paths:
