@@ -148,15 +148,15 @@ workflows:
       - install_composer_dependencies:
           requires:
             - checkout_code
-      - test_prettier
+      - test_prettier:
           requires:
             - checkout_code
             - install_npm_dependencies
-      - test_lintjs
+      - test_lintjs:
           requires:
             - checkout_code
             - install_npm_dependencies
-      - test_lintphp
+      - test_lintphp:
           requires:
             - checkout_code
             - install_npm_dependencies
