@@ -165,7 +165,7 @@ workflows:
       #       - checkout_code
       # - install_composer_dependencies:
       #     requires:
-            - checkout_code
+      #      - checkout_code
       - test_prettier:
           requires:
             - checkout_code
