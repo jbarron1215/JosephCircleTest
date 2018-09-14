@@ -73,6 +73,24 @@ jobs:
           key: v1-repo-{{ .Branch }}-{{ .Revision }}
           paths:
             - .
+      #
+      - *restore_node_modules
+      - run:
+          name: install npm dependencies
+          command: npm install
+      - save_cache:
+          key: *npm_cache_key
+          paths:
+            - node_modules
+      #
+      - *restore_vendor
+      - run:
+          name: install composer dependencies
+          command: composer install -n --prefer-dist
+      - save_cache:
+          key: *composer_cache_key
+          paths:
+            - vendor
 
   # This job is responsible for caching ./node_modules (npm)
   install_npm_dependencies:
@@ -142,22 +160,22 @@ workflows:
   tests_lint:
     jobs:
       - checkout_code
-      - install_npm_dependencies:
-          requires:
-            - checkout_code
-      - install_composer_dependencies:
-          requires:
+      # - install_npm_dependencies:
+      #     requires:
+      #       - checkout_code
+      # - install_composer_dependencies:
+      #     requires:
             - checkout_code
       - test_prettier:
           requires:
             - checkout_code
-            - install_npm_dependencies
+            # - install_npm_dependencies
       - test_lintjs:
           requires:
             - checkout_code
-            - install_npm_dependencies
+            # - install_npm_dependencies
       - test_lintphp:
           requires:
             - checkout_code
-            - install_npm_dependencies
-            - install_composer_dependencies
+            # - install_npm_dependencies
+            # - install_composer_dependencies
