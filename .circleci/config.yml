@@ -14,7 +14,7 @@ references:
       # but they are missing from CircleCI's Docker Hub.
       # We will probably need our own custom image in the future
       # when we integrate unit tests.
-      - image: circleci/php:7.1.21-jessie-node-browsers-legacy
+      - image: circleci/php:7.1.21-jessie-node
     working_directory: &working_directory ~/project
   
   # The root of the workspace, which can persist between jobs.
