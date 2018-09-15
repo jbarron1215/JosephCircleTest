@@ -8,12 +8,7 @@ references:
   # The configuration of the job containers
   container_config: &container_config
     docker:
-      # This image includes PHP 7.12.21, Composer, and Node 8.12.0
-      # Tried to find one that didn't have the extra browser stuff,
-      # or ones that matched our version of PHP more closely
-      # but they are missing from CircleCI's Docker Hub.
-      # We will probably need our own custom image in the future
-      # when we integrate unit tests.
+      # This image includes PHP 5.6.37, Composer, and Node 8.12.0
       - image: circleci/php:5.6.37-apache-jessie-node
     working_directory: &working_directory ~/project
   
