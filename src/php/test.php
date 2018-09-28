@@ -2,9 +2,8 @@
 
 echo 'Hello world!!';
 
-function dostuff( $test )
-{
-	echo 'larrycode';
+function dostuff($test) {
+	echo 'no more larrycode ';
 	echo $test;
 }
 
